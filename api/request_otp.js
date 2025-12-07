@@ -8,15 +8,18 @@ export default async function handler(req, res) {
 
     const BOT_TOKEN = process.env.BOT_TOKEN;
 
+    if (!BOT_TOKEN) {
+        return res.status(400).json({ error: "MISSING_TELEGRAM_CONFIG" });
+    }
+
     // Tạo OTP 6 số
     const otp = Math.floor(100000 + Math.random() * 900000);
     global.currentOtp = otp;
-    global.otpExpire = Date.now() + 2 * 60 * 1000; // Hết hạn sau 2 phút
+    global.otpExpire = Date.now() + 2 * 60 * 1000; // 2 phút
 
-    // Gửi OTP vào Telegram
     await axios.get(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         params: {
-            chat_id: chat_id,
+            chat_id,
             text: `🔐 OTP của bạn là: *${otp}*`,
             parse_mode: "Markdown"
         }
