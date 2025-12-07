@@ -1,6 +1,6 @@
 {
   "name": "otp-server",
-  "version": "1.0.0",
+  "version": "now-php@1.0.0",
   "description": "OTP API for Telegram",
   "main": "api/request_otp.js",
   "type": "module"
