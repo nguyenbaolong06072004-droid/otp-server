@@ -1,18 +1,17 @@
 export default function handler(req, res) {
-  const { otp } = req.body || {};
+    const { otp } = req.query;
 
-  if (!globalThis.otp_data) return res.status(200).json({ error: "NO_OTP" });
+    if (!global.currentOtp) {
+        return res.status(400).json({ success: false, msg: "Chưa tạo OTP" });
+    }
 
-  const { otp: realOtp, expire } = globalThis.otp_data;
+    if (Date.now() > global.otpExpire) {
+        return res.status(400).json({ success: false, msg: "OTP hết hạn" });
+    }
 
-  if (Date.now() > expire) return res.status(200).json({ error: "OTP_EXPIRED" });
+    if (otp == global.currentOtp) {
+        return res.status(200).json({ success: true, msg: "OTP đúng" });
+    }
 
-  if (!otp) return res.status(400).json({ error: "MISSING_OTP" });
-
-  if (otp !== realOtp) return res.status(200).json({ error: "WRONG_OTP" });
-
-  // Khi thành công, xóa OTP để đảm bảo one-time
-  delete globalThis.otp_data;
-
-  return res.status(200).json({ status: "OK" });
+    return res.status(400).json({ success: false, msg: "Sai OTP" });
 }
